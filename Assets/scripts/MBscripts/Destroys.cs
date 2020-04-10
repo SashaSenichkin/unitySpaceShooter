@@ -11,10 +11,16 @@ public class Destroys : MonoBehaviour
     private int? maxZ = null;
     private int CollisionsCount;
 
-    private void Start()
+    private IEnumerator Start()
     {
         if (GetComponent<Player>() != null)
+        {
+            while (GameControlLogic.Instance == null)
+                yield return new WaitForEndOfFrame();
+
             GameControlLogic.Instance?.UpdateLives(Health);
+        }
+
     }
 
     void Update()
