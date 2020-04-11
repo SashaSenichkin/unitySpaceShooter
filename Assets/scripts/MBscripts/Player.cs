@@ -2,62 +2,67 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-[System.Serializable]
-public class Boundary
+namespace SpaceShooter
 {
-    public float xMin, xMax, zMin, zMax;
-}
-
-public class Player : MonoBehaviour {
-    public float Speed;
-    public float Tilt;
-    public int FireCost;
-    public float FireRate;
-    public float BoltSpeed = 15;
-
-    [SerializeField]
-    private GameObject Shot;
-    [SerializeField]
-    public Transform ShotSpawn;
-    [SerializeField]
-    public Boundary Boundary;
-
-    Rigidbody LocalRig;
-    AudioSource LocalAudio;
-
-    private float NextFire;
-
-    private void Start()
+    public class Player : MonoBehaviour
     {
-        LocalRig = GetComponent<Rigidbody>();
-        LocalAudio = GetComponent<AudioSource>();
-    }
+        private const string AxisNameVert = "Vertical";
+        private const string AxisNameHor = "Horizontal";
+        private const string ButtonName = "Fire1";
 
-    public void Update()
-    {
-        var mainLogic = LevelControl.Instance;
-        if (Input.GetButton("Fire1") && Time.time > NextFire && mainLogic?.Score > FireCost)
+        [SerializeField]
+        private float Tilt = 2;
+
+        [SerializeField]
+        private Transform ShotSpawn;
+
+        [SerializeField]
+        private float xSize = 4;
+
+        [SerializeField]
+        private float zSize = 6;
+
+        private Rigidbody LocalRig;
+        private AudioSource LocalAudio;
+        private float NextFireCounter;
+
+        private LevelControl MyControl;
+
+
+        /// <summary>
+        /// call before start!
+        /// </summary>
+        /// <param name="control">link to main presenter</param>
+        public void Initialize(LevelControl control)
         {
-            mainLogic.Score -= FireCost;
-            NextFire = Time.time + FireRate;
-            var bolt = Instantiate(Shot, ShotSpawn.position, ShotSpawn.rotation);
-            bolt.GetComponent<Rigidbody>().velocity = Vector3.forward * BoltSpeed;
-            LocalAudio.Play();
+            MyControl = control;
+            LocalRig = GetComponent<Rigidbody>();
+            LocalAudio = GetComponent<AudioSource>();
         }
+        public void Update()
+        {
+            if (Input.GetButton(ButtonName) && Time.time > NextFireCounter && MyControl?.Score > MyControl.CurrentParams.FireCost)
+            {
+                MyControl.UpdateScore(-MyControl.CurrentParams.FireCost);
+                NextFireCounter = Time.time + MyControl.CurrentParams.FireRate;
+                var bolt = Instantiate(GeneralParams.Instance.ShotPrefab, ShotSpawn.position, ShotSpawn.rotation);
+                bolt.GetComponent<Rigidbody>().velocity = Vector3.forward * MyControl.CurrentParams.BoltSpeed;
+                LocalAudio.Play();
+            }
 
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+            float moveHorizontal = Input.GetAxis(AxisNameHor);
+            float moveVertical = Input.GetAxis(AxisNameVert);
 
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
-        LocalRig.velocity = movement * 10;
+            Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+            LocalRig.velocity = movement * 10;
 
-        LocalRig.position = new Vector3
-        (
-            Mathf.Clamp(LocalRig.position.x, Boundary.xMin, Boundary.xMax),
-            0.0f,
-            Mathf.Clamp(LocalRig.position.z, Boundary.zMin, Boundary.zMax)
-        );
-        LocalRig.rotation = Quaternion.Euler(0.0f, 0.0f, -LocalRig.velocity.x * Tilt);
+            LocalRig.position = new Vector3 //вообще не помню, зачем это... проверить.
+            (
+                Mathf.Clamp(LocalRig.position.x, -xSize, xSize),
+                0.0f,
+                Mathf.Clamp(LocalRig.position.z, -zSize, zSize)
+            );
+            LocalRig.rotation = Quaternion.Euler(0.0f, 0.0f, -LocalRig.velocity.x * Tilt);
+        }
     }
 }
