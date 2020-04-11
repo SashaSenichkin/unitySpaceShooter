@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameControlLogic : MonoBehaviour {
+public class LevelControl : MonoBehaviour {
     private const string UI_Score = "Score: ";
     private const string UI_Life = "Lives: ";
 
@@ -39,9 +39,9 @@ public class GameControlLogic : MonoBehaviour {
             UpdateScore();
         }
     }
-    private static GameControlLogic instance;
+    private static LevelControl instance;
 
-    public static GameControlLogic Instance
+    public static LevelControl Instance
     {
         get 
         {

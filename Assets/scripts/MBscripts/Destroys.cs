@@ -15,10 +15,10 @@ public class Destroys : MonoBehaviour
     {
         if (GetComponent<Player>() != null)
         {
-            while (GameControlLogic.Instance == null)
+            while (LevelControl.Instance == null)
                 yield return new WaitForEndOfFrame();
 
-            GameControlLogic.Instance?.UpdateLives(Health);
+            LevelControl.Instance?.UpdateLives(Health);
         }
 
     }
@@ -27,14 +27,14 @@ public class Destroys : MonoBehaviour
     {
         if (maxZ == null)
         {
-            maxZ = GameControlLogic.Instance?.AsteroidStartPoint;
+            maxZ = LevelControl.Instance?.AsteroidStartPoint;
             return; //wait for initialization
         }
 
         if (Mathf.Abs(transform.position.z) >= maxZ)
         {
-            if (GetComponent<AsteroidMover>() != null && GameControlLogic.Instance != null)
-                GameControlLogic.Instance.Score += AsteroidReward;
+            if (GetComponent<AsteroidMover>() != null && LevelControl.Instance != null)
+                LevelControl.Instance.Score += AsteroidReward;
 
             Destroy(gameObject);
         }
@@ -54,7 +54,7 @@ public class Destroys : MonoBehaviour
         else
         {
             if (GetComponent<Player>() != null)
-                GameControlLogic.Instance?.UpdateLives(Health - CollisionsCount);
+                LevelControl.Instance?.UpdateLives(Health - CollisionsCount);
 
             CollisionsCount++;
         }

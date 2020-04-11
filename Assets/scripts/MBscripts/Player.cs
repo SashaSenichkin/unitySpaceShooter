@@ -36,7 +36,7 @@ public class Player : MonoBehaviour {
 
     public void Update()
     {
-        var mainLogic = GameControlLogic.Instance;
+        var mainLogic = LevelControl.Instance;
         if (Input.GetButton("Fire1") && Time.time > NextFire && mainLogic?.Score > FireCost)
         {
             mainLogic.Score -= FireCost;
