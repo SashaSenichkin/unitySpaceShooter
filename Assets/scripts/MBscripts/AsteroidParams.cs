@@ -6,8 +6,8 @@ namespace SpaceShooter
 {
     public class AsteroidParams : MonoBehaviour
     {
-        public float angularSpeed;
-        public float linSpeed;
-
+        public float AngularSpeed;
+        public float LinSpeed;
+        public int Reward;
     }
 }

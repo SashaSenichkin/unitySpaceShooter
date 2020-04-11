@@ -6,12 +6,12 @@ namespace SpaceShooter
     public class GeneralParams: MonoBehaviour //model
     {
         [SerializeField]
-        private GameObject[] asteroidHazards;
-        public GameObject[] AsteroidHazards => asteroidHazards;
+        private AsteroidParams[] asteroidHazards;
+        public AsteroidParams[] AsteroidHazards => asteroidHazards;
 
         [SerializeField]
-        private GameObject playerPrefab;
-        public GameObject PlayerPrefab => playerPrefab;
+        private Player playerScript;
+        public Player PlayerScript => playerScript;
 
 
         [SerializeField]

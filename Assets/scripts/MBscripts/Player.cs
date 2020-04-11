@@ -11,7 +11,7 @@ namespace SpaceShooter
         private const string ButtonName = "Fire1";
 
         [SerializeField]
-        private float Tilt = 2;
+        private float Tilt = 4;
 
         [SerializeField]
         private Transform ShotSpawn;
@@ -36,22 +36,26 @@ namespace SpaceShooter
         public void Initialize(LevelControl control)
         {
             MyControl = control;
-            LocalRig = GetComponent<Rigidbody>();
-            LocalAudio = GetComponent<AudioSource>();
         }
         public void Update()
         {
-            if (Input.GetButton(ButtonName) && Time.time > NextFireCounter && MyControl?.Score > MyControl.CurrentParams.FireCost)
+            if (LocalRig == null)
+                LocalRig = GetComponent<Rigidbody>();
+
+            if (LocalAudio == null)
+                LocalAudio = GetComponent<AudioSource>();
+
+            if (Input.GetButton(ButtonName) && Time.time > NextFireCounter && MyControl?.Score > MyControl.CurrentParams.PlayerShotCost)
             {
-                MyControl.UpdateScore(-MyControl.CurrentParams.FireCost);
-                NextFireCounter = Time.time + MyControl.CurrentParams.FireRate;
+                MyControl.UpdateScore(-MyControl.CurrentParams.PlayerShotCost);
+                NextFireCounter = Time.time + MyControl.CurrentParams.PlayerFireRate;
                 var bolt = Instantiate(GeneralParams.Instance.ShotPrefab, ShotSpawn.position, ShotSpawn.rotation);
                 bolt.GetComponent<Rigidbody>().velocity = Vector3.forward * MyControl.CurrentParams.BoltSpeed;
                 LocalAudio.Play();
             }
 
-            float moveHorizontal = Input.GetAxis(AxisNameHor);
-            float moveVertical = Input.GetAxis(AxisNameVert);
+            var moveHorizontal = Input.GetAxis(AxisNameHor);
+            var moveVertical = Input.GetAxis(AxisNameVert);
 
             Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
             LocalRig.velocity = movement * 10;

@@ -10,13 +10,18 @@ namespace SpaceShooter
         private readonly GeneralParams GenParams;
         public int Score { get; private set; } = 0;
 
-        private bool GameOver = false;
+        private bool IsGameOver = false;
 
         public LevelControl(LevelParams currentParams)
         {
             CurrentParams = currentParams;
             GenParams = GeneralParams.Instance;
             GenParams.StartCoroutine(SpawnWaves());
+            GenParams.ViewScript.GameOverText.enabled = false;
+
+            GenParams.PlayerScript.Initialize(this);
+            GameObject.Instantiate(GenParams.PlayerScript.gameObject);
+
             UpdateScore(0);
         }
         /*
@@ -35,10 +40,26 @@ namespace SpaceShooter
             Score += changeValue;
             GenParams.ViewScript.ScoreText.text = View.UI_Score + Score;
         }
+        public void UpdatePlayerLives(int newValue)
+        {
+            GenParams.ViewScript.LifeText.text = View.UI_Life + newValue;
+        }
+        public void GameOverLogic(bool isWin)
+        {
+            if (isWin)
+            {
+                //nextLvl
+            }
+            else
+            {
+                IsGameOver = true;
+                GenParams.ViewScript.GameOverText.enabled = true;
+            }
+        }
 
         IEnumerator SpawnWaves()
         {
-            while (!GameOver)
+            while (!IsGameOver)
             {
                 Vector3 spawnPosition = new Vector3(Random.Range(-GenParams.GameFieldHalfWidth, GenParams.GameFieldHalfWidth), 0, GenParams.GameFieldHalfHeight);
                 Quaternion spawnRotation = Quaternion.identity;
@@ -46,12 +67,23 @@ namespace SpaceShooter
                 asteroid.transform.localScale *= CurrentParams.AsteroidsScale;
 
                 var localRig = asteroid.GetComponent<Rigidbody>();
-                var localParams = asteroid.GetComponent<AsteroidParams>();
-                if (localRig != null && localParams != null)
+                var localDestroyInfo = asteroid.GetComponent<DestroyInfo>();
+
+                if (localRig != null && localDestroyInfo != null)
                 {
-                    localRig.velocity = asteroid.transform.forward * ((-localParams.linSpeed) * (Random.value + 1)) + new Vector3(Random.Range(-10, 10) * (float)(localParams.linSpeed * 0.03), 0);
-                    localRig.angularVelocity = Random.insideUnitSphere * localParams.angularSpeed;
-                    GeneralParams.Instantiate(asteroid, spawnPosition, spawnRotation);
+                    localRig.velocity = GenParams.transform.forward * ((-asteroid.LinSpeed) * (Random.value + 1)) + new Vector3(Random.Range(-10, 10) * (float)(asteroid.LinSpeed * 0.03), 0);
+                    localRig.angularVelocity = Random.insideUnitSphere * asteroid.AngularSpeed;
+                    localDestroyInfo.OnDestroyByBorder += () => { UpdateScore(asteroid.Reward); GameObject.Destroy(asteroid); };
+                    localDestroyInfo.OnCollision += () => 
+                        { 
+                            localDestroyInfo.Health--;
+                            if (localDestroyInfo.Health < 0)
+                                GameOverLogic(false);
+                            else
+                                UpdatePlayerLives(localDestroyInfo.Health);
+                        };
+
+                    GeneralParams.Instantiate(asteroid.gameObject, spawnPosition, spawnRotation);
                 }
                 else
                 {

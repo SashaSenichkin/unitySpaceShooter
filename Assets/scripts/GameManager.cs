@@ -8,5 +8,10 @@ namespace SpaceShooter
 {
     public class GameManager: MonoBehaviour
     {
+        private void Start()
+        {
+            var test = new LevelParams();
+            var currentLvl = new LevelControl(test);
+        }
     }
 }
