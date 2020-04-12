@@ -16,6 +16,10 @@ namespace SpaceShooter
 
         public int LevelScoreToFin = 10;
         public bool IsLevelOpened = false;
-        public LevelParams NextLevel;
+        public LevelParams NextLevel; //linked list
+
+        public LevelParams()
+        {
+        }
     }
 }

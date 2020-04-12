@@ -19,6 +19,7 @@ namespace SpaceShooter
             GenParams = GeneralParams.Instance;
             GenParams.StartCoroutine(SpawnWaves());
             GenParams.ViewScript.GameOverText.enabled = false;
+            GenParams.ViewScript.ExitToMenu.onClick.AddListener(() => { if (!IsGameOver) OnLevelFinished?.Invoke(false); });
 
             var playerGO = Object.Instantiate(GenParams.PlayerScript.gameObject, GenParams.transform);
             playerGO.GetComponent<Player>().Initialize(this);
