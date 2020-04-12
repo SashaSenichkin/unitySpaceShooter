@@ -3,9 +3,9 @@
 namespace SpaceShooter
 {
     [Serializable]
-    public class LevelParams //model
+    public class LevelParams //model. tested default values
     {
-        public float AsteroidsSpawnSpeed = 0.5f; 
+        public float AsteroidsSpawnSpeed = 0.7f; 
         public float AsteroidsScale = 1;
 
         public float PlayerSpeed = 10;

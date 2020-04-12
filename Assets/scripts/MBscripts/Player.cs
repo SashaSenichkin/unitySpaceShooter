@@ -60,9 +60,9 @@ namespace SpaceShooter
             if (LocalAudio == null)
                 LocalAudio = GetComponent<AudioSource>();
 
-            if (Input.GetButton(ButtonName) && Time.time > NextFireCounter && MyControl.Score > MyControl.CurrentLevelParams.PlayerShotCost)
+            if (Input.GetButton(ButtonName) && Time.time > NextFireCounter /*&& MyControl.Score >= MyControl.CurrentLevelParams.PlayerShotCost*/)
             {
-                MyControl.UpdateScore(-MyControl.CurrentLevelParams.PlayerShotCost);
+                //MyControl.UpdateScore(-MyControl.CurrentLevelParams.PlayerShotCost); //такие вещи надо описать игроку.. иначе ощущение что выстрелы ломаются...
                 NextFireCounter = Time.time + MyControl.CurrentLevelParams.PlayerFireRate;
                 var boltGO = Instantiate(GeneralParams.Instance.ShotPrefab, ShotSpawn.position, ShotSpawn.rotation);
                 boltGO.GetComponent<Rigidbody>().velocity = Vector3.forward * MyControl.CurrentLevelParams.BoltSpeed;

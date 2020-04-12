@@ -39,7 +39,7 @@ namespace SpaceShooter
         public void UpdateScore(int changeValue)
         {
             Score += changeValue;
-            GenParams.ViewScript.ScoreText.text = View.UI_Score + Score;
+            GenParams.ViewScript.ScoreText.text = string.Format(View.UI_Score, Score, CurrentLevelParams.LevelScoreToFin);
             if (Score >= CurrentLevelParams.LevelScoreToFin)
                 GameOverLogic(true);
         }

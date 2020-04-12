@@ -9,6 +9,8 @@ using UnityEngine.UI;
 using System.Xml.Serialization;
 using System.IO;
 
+#pragma warning disable CS0649
+
 namespace SpaceShooter
 {
     public class GameManager: MonoBehaviour
@@ -24,18 +26,37 @@ namespace SpaceShooter
         {
             DontDestroyOnLoad(this);
             AllLevels = new Dictionary<GameObject, LevelParams>();
-            foreach (var button in OrderedButtons)
+            for (int i = 0; i < OrderedButtons.Length; i++)
             {
-                var newLevelParams = new LevelParams();
+                var newLevelParams = GetRandomizedLevelParams(i);
                 if (AllLevels.Any())
                     AllLevels.LastOrDefault().Value.NextLevel = newLevelParams;
 
+                var button = OrderedButtons[i];
                 AllLevels.Add(button, newLevelParams);
                 button.GetComponent<Button>().onClick.AddListener(() => ProcessButtonClick(button));
             }
 
             AllLevels.First().Value.IsLevelOpened = true;
             UpdateButtonColors();
+        }
+
+        LevelParams GetRandomizedLevelParams(int complexity)
+        {
+            var result = new LevelParams()//каждый следующий уровень сложнее.. но в целом - цифры с потолка)
+            {
+                AsteroidsScale = 1 + Random.Range(0, 0.3f) * complexity,
+                AsteroidsSpawnSpeed = 0.7f - Random.Range(0, 0.1f) * complexity,
+
+                PlayerSpeed = 10 - Random.Range(0, 0.5f) * complexity,
+                PlayerShotCost = complexity / 2,
+                PlayerFireRate = 0.2f + Random.Range(0, 0.1f) * complexity,
+
+                BoltSpeed = 15 - Random.Range(0, 1f) * complexity,
+                LevelScoreToFin = 10 + Random.Range(10, 30) * complexity
+            };
+
+            return result;
         }
         void UpdateButtonColors()
         {
@@ -67,6 +88,7 @@ namespace SpaceShooter
                 lvlControl.OnLevelFinished += (isWin) => LevelComplete(sender, isWin);
             };
         }
+
         public void SaveGame()
         {
             XmlSerializer formatter = new XmlSerializer(typeof(LevelParams));
@@ -100,7 +122,6 @@ namespace SpaceShooter
 
                 AllLevels = newLevelData;
                 UpdateButtonColors();
-
             }
         }
     }
