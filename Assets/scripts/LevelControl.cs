@@ -19,9 +19,8 @@ namespace SpaceShooter
             GenParams.StartCoroutine(SpawnWaves());
             GenParams.ViewScript.GameOverText.enabled = false;
 
-            GenParams.PlayerScript.Initialize(this);
-            GameObject.Instantiate(GenParams.PlayerScript.gameObject);
-
+            var playerGO = Object.Instantiate(GenParams.PlayerScript.gameObject);
+            playerGO.GetComponent<Player>().Initialize(this);
             UpdateScore(0);
         }
         /*
@@ -64,26 +63,27 @@ namespace SpaceShooter
                 Vector3 spawnPosition = new Vector3(Random.Range(-GenParams.GameFieldHalfWidth, GenParams.GameFieldHalfWidth), 0, GenParams.GameFieldHalfHeight);
                 Quaternion spawnRotation = Quaternion.identity;
                 var asteroid = GenParams.AsteroidHazards[Random.Range(0, 3)];
-                asteroid.transform.localScale *= CurrentParams.AsteroidsScale;
+                var asteroidGO = Object.Instantiate(asteroid.gameObject, spawnPosition, spawnRotation);
+                asteroidGO.transform.localScale *= CurrentParams.AsteroidsScale;
 
-                var localRig = asteroid.GetComponent<Rigidbody>();
-                var localDestroyInfo = asteroid.GetComponent<DestroyInfo>();
+                var localRig = asteroidGO.GetComponent<Rigidbody>();
+                var localDestroyInfo = asteroidGO.GetComponent<DestroyInfo>();
 
                 if (localRig != null && localDestroyInfo != null)
                 {
                     localRig.velocity = GenParams.transform.forward * ((-asteroid.LinSpeed) * (Random.value + 1)) + new Vector3(Random.Range(-10, 10) * (float)(asteroid.LinSpeed * 0.03), 0);
                     localRig.angularVelocity = Random.insideUnitSphere * asteroid.AngularSpeed;
-                    localDestroyInfo.OnDestroyByBorder += () => { UpdateScore(asteroid.Reward); GameObject.Destroy(asteroid); };
-                    localDestroyInfo.OnCollision += () => 
-                        { 
-                            localDestroyInfo.Health--;
-                            if (localDestroyInfo.Health < 0)
-                                GameOverLogic(false);
-                            else
-                                UpdatePlayerLives(localDestroyInfo.Health);
-                        };
-
-                    GeneralParams.Instantiate(asteroid.gameObject, spawnPosition, spawnRotation);
+                    localDestroyInfo.OnDestroyByBorder += () => { UpdateScore(asteroid.Reward); Object.Destroy(asteroidGO); };
+                    localDestroyInfo.OnCollision += (collider) =>
+                    {
+                        localDestroyInfo.Health--;
+                        if (localDestroyInfo.Health <= 0 || collider.GetComponent<Player>() != null)
+                        {
+                            var explosion = Object.Instantiate(localDestroyInfo.MyExplosion, asteroidGO.transform.position, Quaternion.identity);
+                            Object.Destroy(explosion, 2);
+                            Object.Destroy(asteroidGO);
+                        }
+                    };
                 }
                 else
                 {

@@ -9,5 +9,6 @@ namespace SpaceShooter
         public float AngularSpeed;
         public float LinSpeed;
         public int Reward;
+
     }
 }

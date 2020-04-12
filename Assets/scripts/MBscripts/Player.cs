@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#pragma warning disable CS0649
 
 namespace SpaceShooter
 {
@@ -17,10 +18,10 @@ namespace SpaceShooter
         private Transform ShotSpawn;
 
         [SerializeField]
-        private float xSize = 4;
+        private float xSize = 6;
 
         [SerializeField]
-        private float zSize = 6;
+        private float zSize = 8;
 
         private Rigidbody LocalRig;
         private AudioSource LocalAudio;
@@ -36,21 +37,39 @@ namespace SpaceShooter
         public void Initialize(LevelControl control)
         {
             MyControl = control;
+            var localDestroyInfo = GetComponent<DestroyInfo>();
+            localDestroyInfo.OnCollision += (collider) =>
+            {
+                localDestroyInfo.Health--;
+                if (localDestroyInfo.Health < 0)
+                    MyControl.GameOverLogic(false);
+                else
+                    MyControl.UpdatePlayerLives(localDestroyInfo.Health);
+            };
+
+            MyControl.UpdatePlayerLives(localDestroyInfo.Health);
         }
         public void Update()
         {
+            if (MyControl == null)
+                return; //have to be initilized
+
             if (LocalRig == null)
                 LocalRig = GetComponent<Rigidbody>();
 
             if (LocalAudio == null)
                 LocalAudio = GetComponent<AudioSource>();
 
-            if (Input.GetButton(ButtonName) && Time.time > NextFireCounter && MyControl?.Score > MyControl.CurrentParams.PlayerShotCost)
+            if (Input.GetButton(ButtonName) && Time.time > NextFireCounter && MyControl.Score > MyControl.CurrentParams.PlayerShotCost)
             {
                 MyControl.UpdateScore(-MyControl.CurrentParams.PlayerShotCost);
                 NextFireCounter = Time.time + MyControl.CurrentParams.PlayerFireRate;
-                var bolt = Instantiate(GeneralParams.Instance.ShotPrefab, ShotSpawn.position, ShotSpawn.rotation);
-                bolt.GetComponent<Rigidbody>().velocity = Vector3.forward * MyControl.CurrentParams.BoltSpeed;
+                var boltGO = Instantiate(GeneralParams.Instance.ShotPrefab, ShotSpawn.position, ShotSpawn.rotation);
+                boltGO.GetComponent<Rigidbody>().velocity = Vector3.forward * MyControl.CurrentParams.BoltSpeed;
+                var destroyInfo = boltGO.GetComponent<DestroyInfo>();
+                destroyInfo.OnCollision += (collider) => Destroy(boltGO);
+                destroyInfo.OnDestroyByBorder += () => Destroy(boltGO);
+
                 LocalAudio.Play();
             }
 

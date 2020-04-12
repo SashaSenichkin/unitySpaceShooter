@@ -10,18 +10,17 @@ namespace SpaceShooter
         public GameObject MyExplosion;
 
         public event Action OnDestroyByBorder;
-        public event Action OnCollision;
+        public event Action<Collider> OnCollision;
 
         void Update()
         {
-            if (Mathf.Abs(transform.position.z) >= GeneralParams.Instance.GameFieldHalfHeight && OnDestroyByBorder != null)
-                OnDestroyByBorder();
+            if (Mathf.Abs(transform.position.z) > GeneralParams.Instance.GameFieldHalfHeight + 1)
+                OnDestroyByBorder?.Invoke();
         }
 
         void OnTriggerEnter(Collider other)
         {
-            if (OnCollision != null)
-                OnCollision();
+            OnCollision?.Invoke(other);
         }
     }
 }

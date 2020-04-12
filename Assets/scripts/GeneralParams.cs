@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-
+#pragma warning disable CS0649
 namespace SpaceShooter
 {
     public class GeneralParams: MonoBehaviour //model
@@ -31,6 +31,10 @@ namespace SpaceShooter
         private void Awake()
         {
             Instance = this;
+        }
+        private void OnDestroy()
+        {
+            Instance = null;
         }
     }
 }
