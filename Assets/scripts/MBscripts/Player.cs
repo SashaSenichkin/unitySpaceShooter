@@ -60,12 +60,12 @@ namespace SpaceShooter
             if (LocalAudio == null)
                 LocalAudio = GetComponent<AudioSource>();
 
-            if (Input.GetButton(ButtonName) && Time.time > NextFireCounter && MyControl.Score > MyControl.CurrentParams.PlayerShotCost)
+            if (Input.GetButton(ButtonName) && Time.time > NextFireCounter && MyControl.Score > MyControl.CurrentLevelParams.PlayerShotCost)
             {
-                MyControl.UpdateScore(-MyControl.CurrentParams.PlayerShotCost);
-                NextFireCounter = Time.time + MyControl.CurrentParams.PlayerFireRate;
+                MyControl.UpdateScore(-MyControl.CurrentLevelParams.PlayerShotCost);
+                NextFireCounter = Time.time + MyControl.CurrentLevelParams.PlayerFireRate;
                 var boltGO = Instantiate(GeneralParams.Instance.ShotPrefab, ShotSpawn.position, ShotSpawn.rotation);
-                boltGO.GetComponent<Rigidbody>().velocity = Vector3.forward * MyControl.CurrentParams.BoltSpeed;
+                boltGO.GetComponent<Rigidbody>().velocity = Vector3.forward * MyControl.CurrentLevelParams.BoltSpeed;
                 var destroyInfo = boltGO.GetComponent<DestroyInfo>();
                 destroyInfo.OnCollision += (collider) => Destroy(boltGO);
                 destroyInfo.OnDestroyByBorder += () => Destroy(boltGO);

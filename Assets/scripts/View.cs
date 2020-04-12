@@ -11,5 +11,7 @@ namespace SpaceShooter
 
         public const string UI_Score = "Score: ";
         public const string UI_Life = "Lives: ";
+        public const string UI_LevelWin = "Level complete";
+        public const string UI_LevelLose = "YOU DIED";
     }
 }

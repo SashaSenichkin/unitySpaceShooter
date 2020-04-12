@@ -6,20 +6,21 @@ namespace SpaceShooter
 {
     public class LevelControl //Presenter
     {
-        public readonly LevelParams CurrentParams;
+        public readonly LevelParams CurrentLevelParams;
         private readonly GeneralParams GenParams;
         public int Score { get; private set; } = 0;
 
         private bool IsGameOver = false;
+        public event System.Action<bool> OnLevelFinished;
 
         public LevelControl(LevelParams currentParams)
         {
-            CurrentParams = currentParams;
+            CurrentLevelParams = currentParams;
             GenParams = GeneralParams.Instance;
             GenParams.StartCoroutine(SpawnWaves());
             GenParams.ViewScript.GameOverText.enabled = false;
 
-            var playerGO = Object.Instantiate(GenParams.PlayerScript.gameObject);
+            var playerGO = Object.Instantiate(GenParams.PlayerScript.gameObject, GenParams.transform);
             playerGO.GetComponent<Player>().Initialize(this);
             UpdateScore(0);
         }
@@ -38,6 +39,8 @@ namespace SpaceShooter
         {
             Score += changeValue;
             GenParams.ViewScript.ScoreText.text = View.UI_Score + Score;
+            if (Score >= CurrentLevelParams.LevelScoreToFin)
+                GameOverLogic(true);
         }
         public void UpdatePlayerLives(int newValue)
         {
@@ -45,15 +48,16 @@ namespace SpaceShooter
         }
         public void GameOverLogic(bool isWin)
         {
-            if (isWin)
-            {
-                //nextLvl
-            }
-            else
-            {
-                IsGameOver = true;
-                GenParams.ViewScript.GameOverText.enabled = true;
-            }
+            IsGameOver = true;
+            GenParams.ViewScript.GameOverText.text = isWin ? View.UI_LevelWin : View.UI_LevelLose;
+            GenParams.ViewScript.GameOverText.enabled = true;
+            GenParams.StartCoroutine(WaitAndFinishGame(isWin));
+        }
+
+        IEnumerator WaitAndFinishGame(bool isWin)
+        {
+            yield return new WaitForSeconds(2);
+            OnLevelFinished?.Invoke(isWin);
         }
 
         IEnumerator SpawnWaves()
@@ -63,8 +67,8 @@ namespace SpaceShooter
                 Vector3 spawnPosition = new Vector3(Random.Range(-GenParams.GameFieldHalfWidth, GenParams.GameFieldHalfWidth), 0, GenParams.GameFieldHalfHeight);
                 Quaternion spawnRotation = Quaternion.identity;
                 var asteroid = GenParams.AsteroidHazards[Random.Range(0, 3)];
-                var asteroidGO = Object.Instantiate(asteroid.gameObject, spawnPosition, spawnRotation);
-                asteroidGO.transform.localScale *= CurrentParams.AsteroidsScale;
+                var asteroidGO = Object.Instantiate(asteroid.gameObject, spawnPosition, spawnRotation, GenParams.transform);
+                asteroidGO.transform.localScale *= CurrentLevelParams.AsteroidsScale;
 
                 var localRig = asteroidGO.GetComponent<Rigidbody>();
                 var localDestroyInfo = asteroidGO.GetComponent<DestroyInfo>();
@@ -90,7 +94,7 @@ namespace SpaceShooter
                     Debug.LogError("asteroid spawn error");
                 }
 
-                yield return new WaitForSeconds(CurrentParams.AsteroidsSpawnSpeed);
+                yield return new WaitForSeconds(CurrentLevelParams.AsteroidsSpawnSpeed);
             }
             yield break;
         }
