@@ -92,7 +92,10 @@ namespace SpaceShooter
         public void SaveGame()
         {
             XmlSerializer formatter = new XmlSerializer(typeof(LevelParams));
-            using (FileStream fs = new FileStream(SaveFileName, FileMode.OpenOrCreate))
+            if (File.Exists(SaveFileName))
+                File.Delete(SaveFileName);
+
+            using (FileStream fs = new FileStream(SaveFileName, FileMode.CreateNew))
             {
                 formatter.Serialize(fs, AllLevels.First().Value);
             }

@@ -41,8 +41,13 @@ namespace SpaceShooter
             localDestroyInfo.OnCollision += (collider) =>
             {
                 localDestroyInfo.Health--;
-                if (localDestroyInfo.Health < 0)
+                if (localDestroyInfo.Health <= 0)
+                {
+                    var explosion = Instantiate(localDestroyInfo.MyExplosion, transform.position, Quaternion.identity);
+                    Destroy(explosion, 2);
                     MyControl.GameOverLogic(false);
+                    Destroy(this);
+                }
                 else
                     MyControl.UpdatePlayerLives(localDestroyInfo.Health);
             };

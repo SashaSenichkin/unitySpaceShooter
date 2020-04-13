@@ -9,43 +9,43 @@
   <LevelScoreToFin>10</LevelScoreToFin>
   <IsLevelOpened>true</IsLevelOpened>
   <NextLevel>
-    <AsteroidsSpawnSpeed>0.6581673</AsteroidsSpawnSpeed>
-    <AsteroidsScale>1.2945509</AsteroidsScale>
-    <PlayerSpeed>9.899905</PlayerSpeed>
+    <AsteroidsSpawnSpeed>0.6151889</AsteroidsSpawnSpeed>
+    <AsteroidsScale>1.034255</AsteroidsScale>
+    <PlayerSpeed>9.9244</PlayerSpeed>
     <PlayerShotCost>0</PlayerShotCost>
-    <PlayerFireRate>0.252638847</PlayerFireRate>
-    <BoltSpeed>14.3963013</BoltSpeed>
-    <LevelScoreToFin>37</LevelScoreToFin>
+    <PlayerFireRate>0.27313453</PlayerFireRate>
+    <BoltSpeed>14.84285</BoltSpeed>
+    <LevelScoreToFin>24</LevelScoreToFin>
     <IsLevelOpened>true</IsLevelOpened>
     <NextLevel>
-      <AsteroidsSpawnSpeed>0.572311044</AsteroidsSpawnSpeed>
-      <AsteroidsScale>1.32866764</AsteroidsScale>
-      <PlayerSpeed>9.804121</PlayerSpeed>
+      <AsteroidsSpawnSpeed>0.59934324</AsteroidsSpawnSpeed>
+      <AsteroidsScale>1.45720685</AsteroidsScale>
+      <PlayerSpeed>9.488378</PlayerSpeed>
       <PlayerShotCost>1</PlayerShotCost>
-      <PlayerFireRate>0.344204366</PlayerFireRate>
-      <BoltSpeed>14.5482349</BoltSpeed>
-      <LevelScoreToFin>60</LevelScoreToFin>
+      <PlayerFireRate>0.2533667</PlayerFireRate>
+      <BoltSpeed>13.18487</BoltSpeed>
+      <LevelScoreToFin>66</LevelScoreToFin>
       <IsLevelOpened>true</IsLevelOpened>
       <NextLevel>
-        <AsteroidsSpawnSpeed>0.5816376</AsteroidsSpawnSpeed>
-        <AsteroidsScale>1.81814861</AsteroidsScale>
-        <PlayerSpeed>9.19726849</PlayerSpeed>
+        <AsteroidsSpawnSpeed>0.5696793</AsteroidsSpawnSpeed>
+        <AsteroidsScale>1.40414619</AsteroidsScale>
+        <PlayerSpeed>9.242384</PlayerSpeed>
         <PlayerShotCost>1</PlayerShotCost>
-        <PlayerFireRate>0.424278557</PlayerFireRate>
-        <BoltSpeed>12.6016769</BoltSpeed>
-        <LevelScoreToFin>58</LevelScoreToFin>
-        <IsLevelOpened>false</IsLevelOpened>
+        <PlayerFireRate>0.427373648</PlayerFireRate>
+        <BoltSpeed>13.2411194</BoltSpeed>
+        <LevelScoreToFin>64</LevelScoreToFin>
+        <IsLevelOpened>true</IsLevelOpened>
         <NextLevel>
-          <AsteroidsSpawnSpeed>0.51622045</AsteroidsSpawnSpeed>
-          <AsteroidsScale>2.17824316</AsteroidsScale>
-          <PlayerSpeed>9.243034</PlayerSpeed>
+          <AsteroidsSpawnSpeed>0.532134533</AsteroidsSpawnSpeed>
+          <AsteroidsScale>1.58844173</AsteroidsScale>
+          <PlayerSpeed>8.922866</PlayerSpeed>
           <PlayerShotCost>2</PlayerShotCost>
-          <PlayerFireRate>0.299518883</PlayerFireRate>
-          <BoltSpeed>14.5477734</BoltSpeed>
+          <PlayerFireRate>0.5943526</PlayerFireRate>
+          <BoltSpeed>12.7366514</BoltSpeed>
           <LevelScoreToFin>122</LevelScoreToFin>
           <IsLevelOpened>false</IsLevelOpened>
         </NextLevel>
       </NextLevel>
     </NextLevel>
   </NextLevel>
-</LevelParams>>
+</LevelParams>
