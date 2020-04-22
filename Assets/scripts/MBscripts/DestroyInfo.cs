@@ -14,7 +14,10 @@ namespace SpaceShooter
 
         void Update()
         {
-            if (Mathf.Abs(transform.position.z) > GeneralParams.Instance.GameFieldHalfHeight + 1)
+            if (GeneralParams.Instance == null)
+                Destroy(this);
+
+            if (Mathf.Abs(transform.position.z) > GeneralParams.Instance?.GameFieldHalfHeight + 1)
                 OnDestroyByBorder?.Invoke();
         }
 

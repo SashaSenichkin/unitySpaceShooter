@@ -4,30 +4,28 @@ using UnityEngine;
 
 namespace SpaceShooter
 {
-    public class LevelControl //Presenter
+    public class LevelController
+
     {
         public readonly LevelParams CurrentLevelParams;
         private readonly GeneralParams GenParams;
-        public int Score { get; private set; } = 0;
 
-        private bool IsGameOver = false;
         public event System.Action<bool> OnLevelFinished;
 
-        public LevelControl(LevelParams currentParams)
+        private bool IsGameOver = false;
+        private float NextFireCounter;
+
+        public LevelController(LevelParams currentParams)
         {
             CurrentLevelParams = currentParams;
             GenParams = GeneralParams.Instance;
             GenParams.StartCoroutine(SpawnWaves());
-            GenParams.ViewScript.GameOverText.enabled = false;
-            GenParams.ViewScript.ExitToMenu.onClick.AddListener(() => { if (!IsGameOver) OnLevelFinished?.Invoke(false); });
 
-            var playerGO = Object.Instantiate(GenParams.PlayerScript.gameObject, GenParams.transform);
-            playerGO.GetComponent<Player>().Initialize(this);
+            GenParams.ViewScript.Initialize(this);
             UpdateScore(0);
         }
         /*
         снимать очки за каждый выстрел
-        добавлять за каждый астероид, уничтоженный границей
         возможные улучшения: добавление небольшого количества очков за уничтоженные астероиды
         ускорение перезарядки
         двойной-тройной выстрел
@@ -38,21 +36,18 @@ namespace SpaceShooter
 
         public void UpdateScore(int changeValue)
         {
-            Score += changeValue;
-            GenParams.ViewScript.ScoreText.text = string.Format(View.UI_Score, Score, CurrentLevelParams.LevelScoreToFin);
-            if (Score >= CurrentLevelParams.LevelScoreToFin)
-                GameOverLogic(true);
+            GenParams.Score += changeValue;
+            if (GenParams.Score >= CurrentLevelParams.LevelScoreToFin)
+                OnLevelFinished(true);
         }
-        public void UpdatePlayerLives(int newValue)
+
+        public void GameOverLogic(bool? isWin)
         {
-            GenParams.ViewScript.LifeText.text = View.UI_Life + newValue;
-        }
-        public void GameOverLogic(bool isWin)
-        {
+            if (IsGameOver)
+                OnLevelFinished?.Invoke(false);
+
             IsGameOver = true;
-            GenParams.ViewScript.GameOverText.text = isWin ? View.UI_LevelWin : View.UI_LevelLose;
-            GenParams.ViewScript.GameOverText.enabled = true;
-            GenParams.StartCoroutine(WaitAndFinishGame(isWin));
+            GenParams.StartCoroutine(WaitAndFinishGame(isWin == true));
         }
 
         IEnumerator WaitAndFinishGame(bool isWin)
@@ -79,6 +74,7 @@ namespace SpaceShooter
                     localRig.velocity = GenParams.transform.forward * ((-asteroid.LinSpeed) * (Random.value + 1)) + new Vector3(Random.Range(-10, 10) * (float)(asteroid.LinSpeed * 0.03), 0);
                     localRig.angularVelocity = Random.insideUnitSphere * asteroid.AngularSpeed;
                     localDestroyInfo.OnDestroyByBorder += () => { UpdateScore(asteroid.Reward); Object.Destroy(asteroidGO); };
+                    
                     localDestroyInfo.OnCollision += (collider) =>
                     {
                         localDestroyInfo.Health--;
@@ -99,5 +95,22 @@ namespace SpaceShooter
             }
             yield break;
         }
+
+        public void PlayerShot(Transform shopSpawn, AudioSource spaceshipAudio)
+        {
+            if (Time.time > NextFireCounter /*&& MyControl.Score >= MyControl.CurrentLevelParams.PlayerShotCost*/)
+            {
+                //MyControl.UpdateScore(-MyControl.CurrentLevelParams.PlayerShotCost); //такие вещи надо описать игроку.. иначе ощущение что выстрелы ломаются...
+                NextFireCounter = Time.time + CurrentLevelParams.PlayerFireRate;
+                var boltGO = Object.Instantiate(GenParams.ShotPrefab, shopSpawn.position, shopSpawn.rotation);
+                boltGO.GetComponent<Rigidbody>().velocity = Vector3.forward * CurrentLevelParams.BoltSpeed;
+                var destroyInfo = boltGO.GetComponent<DestroyInfo>();
+                destroyInfo.OnCollision += (collider) => Object.Destroy(boltGO);
+                destroyInfo.OnDestroyByBorder += () => Object.Destroy(boltGO);
+
+                spaceshipAudio.Play();
+            }
+        }
+
     }
 }

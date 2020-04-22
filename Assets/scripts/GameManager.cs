@@ -84,7 +84,7 @@ namespace SpaceShooter
             asyncLoader.completed += (arg1) =>
             {
                 MenuCanvas.enabled = false;
-                var lvlControl = new LevelControl(AllLevels[sender]);
+                var lvlControl = new LevelController(AllLevels[sender]);
                 lvlControl.OnLevelFinished += (isWin) => LevelComplete(sender, isWin);
             };
         }

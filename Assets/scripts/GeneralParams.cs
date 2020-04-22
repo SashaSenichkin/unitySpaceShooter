@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using UnityEngine;
 #pragma warning disable CS0649
 namespace SpaceShooter
@@ -10,17 +11,23 @@ namespace SpaceShooter
         public AsteroidParams[] AsteroidHazards => asteroidHazards;
 
         [SerializeField]
-        private Player playerScript;
-        public Player PlayerScript => playerScript;
-
-
-        [SerializeField]
         private GameObject shotPrefab;
         public GameObject ShotPrefab => shotPrefab;
 
         [SerializeField]
         private View viewScript;
         public View ViewScript => viewScript;
+
+        public event Action<int> OnScoreChanged;
+        private int score;
+        public int Score
+        {
+            get { return score; }
+            set { 
+                score = value;
+                OnScoreChanged?.Invoke(score);
+            }
+        }
 
 
         public int GameFieldHalfHeight { get; } = 16;
